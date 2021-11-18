@@ -7,58 +7,58 @@ package project;
 import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Scanner;
 
 /**
  *
  * @author minht
  */
-public class Server {
+public class Encode {
     //length of digraph array  
 
     //length of digraph array  
-     static DataOutputStream dout=null;
-       static  DataInputStream din=null;
+    static DataOutputStream dout = null;
+    static DataInputStream din = null;
     private int length = 0;
 //creates a matrix for Playfair cipher   
     private String[][] table;
 //main() method to test Playfair method  
 
-   private static String resultDecode="";
+    private static String resultEncode = "";
+
 //main run of the program, Playfair method  
 //constructor of the class  
+    public static String getResultEncode() {
+        return resultEncode;
 
-    private Server(String keyInput, String input) {
-//prompts user for the keyword to use for encoding & creates tables  
+    }
+
+    public Encode(String keyInput, String input) {
+        //prompts user for the keyword to use for encoding & creates tables  
         System.out.print("Enter the key for playfair cipher: ");
         Scanner sc = new Scanner(System.in);
         String key = parseString(keyInput);
         table = this.cipherTable(key);
-//prompts user for message to be encoded  
+//prompts user for message to be encoded
         System.out.print("Enter the plaintext to be encipher: ");
-//System.out.println("using the previously given keyword");  
+//System.out.println("using the previously given keyword");
         String message = parseString(input);
         while (input.equals("")) {
             input = parseString(input);
         }
-//encodes and then decodes the encoded message  
-           String decodedOutput = decode(input);
-            resultDecode=decodedOutput; 
-    
-        
-//output the results to user  
-      this.keyTable(table);
-   //     this.printResults(output, decodedOutput);
+//encodes and then decodes the encoded message
 
+        resultEncode = cipher(message);
+
+//output the results to user
+        this.keyTable(table);
+//     this.printResults(output, decodedOutput);
     }
-//parses an input string to remove numbers, punctuation,  
+//parses an input string to remove numbers, punctuation,
 //replaces any J's with I's and makes string all caps  
 
     private String parseString(String text) {
-     
+
 //converts all the letters in upper case  
         text = text.toUpperCase();
 //the string to be substituted by space for each match (A to Z)  
@@ -164,33 +164,6 @@ public class Server {
     }
 //-----------------------decryption logic---------------------  
 // decodes the output given from the cipher and decode methods (opp. of encoding process)  
-
-    private String decode(String out) {
-        String decoded = "";
-        for (int i = 0; i < out.length() / 2; i++) {
-            char a = out.charAt(2 * i);
-            char b = out.charAt(2 * i + 1);
-            int r1 = (int) getPoint(a).getX();
-            int r2 = (int) getPoint(b).getX();
-            int c1 = (int) getPoint(a).getY();
-            int c2 = (int) getPoint(b).getY();
-            if (r1 == r2) {
-                c1 = (c1 + 4) % 5;
-                c2 = (c2 + 4) % 5;
-            } else if (c1 == c2) {
-                r1 = (r1 + 4) % 5;
-                r2 = (r2 + 4) % 5;
-            } else {
-//swapping logic      
-                int temp = c1;
-                c1 = c2;
-                c2 = temp;
-            }
-            decoded = decoded + table[r1][c1] + table[r2][c2];
-        }
-//returns the decoded message  
-        return decoded;
-    }
 // returns a point containing the row and column of the letter  
 
     private Point getPoint(char c) {
@@ -220,29 +193,4 @@ public class Server {
         }
         System.out.println();
     }
-//method that prints all the results  
-
-    public static void main(String[] args) throws IOException {
-        ServerSocket serverSock = new ServerSocket(8888);
-       
-        System.out.println("Server is running!");
-        while (true) {
-            Socket client = serverSock.accept();
-            System.out.println("Server dang co client ket noi!");
-            din = new DataInputStream(client.getInputStream());
-            dout = new DataOutputStream(client.getOutputStream());
-            String key = din.readUTF();
-            String message=din.readUTF();
-            System.out.println("key: "+key);
-            System.out.println("message: "+message);
-           Server server = new Server(key, message);
-           dout.writeUTF(resultDecode);     
-    }
-        }
-
-//        serverSock.close();
-//        client.close();
-    }
-
-
-
+}

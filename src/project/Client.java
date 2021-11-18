@@ -32,10 +32,13 @@ public class Client {
         System.out.println("Nhap key:");
         String key=sc.nextLine();
         System.out.println("Nhap message:");
+     
         String message=sc.nextLine();
+          Encode encode =new Encode(key,message);
+          String messageEncode=encode.getResultEncode();
         try {
             dout.writeUTF(key);
-            dout.writeUTF(message);
+            dout.writeUTF(messageEncode);
             String ketQua = din.readUTF();
             System.out.println("Ket qua: "+ketQua);
             
