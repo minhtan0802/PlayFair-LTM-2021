@@ -17,8 +17,7 @@ public class Encode {
     //length of digraph array  
 
     //length of digraph array  
-    static DataOutputStream dout = null;
-    static DataInputStream din = null;
+    private String keyTable;
     private int length = 0;
 //creates a matrix for Playfair cipher   
     private String[][] table;
@@ -31,6 +30,30 @@ public class Encode {
     public static String getResultEncode() {
         return resultEncode;
 
+    }
+
+    public String getKeyTable() {
+        return keyTable;
+    }
+
+    public void setKeyTable(String keyTable) {
+        this.keyTable = keyTable;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public String[][] getTable() {
+        return table;
+    }
+
+    public void setTable(String[][] table) {
+        this.table = table;
     }
 
     public Encode(String keyInput, String input) {
@@ -179,7 +202,8 @@ public class Encode {
     }
 //function prints the key-table in matrix form for playfair cipher  
 
-    private void keyTable(String[][] printTable) {
+    public void keyTable(String[][] printTable) {
+        keyTable="";
         System.out.println("Playfair Cipher Key Matrix: ");
         System.out.println();
 //loop iterates for rows  
@@ -187,10 +211,11 @@ public class Encode {
 //loop iterates for column    
             for (int j = 0; j < 5; j++) {
 //prints the key-table in matrix form     
-                System.out.print(printTable[i][j] + " ");
+                keyTable=keyTable+printTable[i][j] + " ";
             }
-            System.out.println();
+            keyTable=keyTable+"\n";
         }
-        System.out.println();
+         keyTable=keyTable+"\n";
+        
     }
 }

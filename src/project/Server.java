@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -20,45 +21,81 @@ public class Server {
     //length of digraph array  
 
     //length of digraph array  
-     static DataOutputStream dout=null;
-       static  DataInputStream din=null;
+    static DataOutputStream dout = null;
+    static DataInputStream din = null;
     private int length = 0;
 //creates a matrix for Playfair cipher   
     private String[][] table;
 //main() method to test Playfair method  
 
-   private static String resultDecode="";
+    private static String resultDecode = "";
 //main run of the program, Playfair method  
 //constructor of the class  
+    private ArrayList<Integer> listIndex = new ArrayList<Integer>();
+    private static String listIndexString;
+    public static Server server;
 
-    private Server(String keyInput, String input) {
+    public String getListIndexString() {
+        return listIndexString;
+    }
+
+    public void setListIndexString(String listIndexString) {
+        this.listIndexString = listIndexString;
+    }
+
+    private void find(String text, String keyword) {
+        listIndex.clear();
+        String[] output = text.split(keyword);
+        int index = 0;
+        if (text.indexOf(keyword) != -1) {
+            index = text.indexOf(keyword);
+            listIndex.add(index);
+            text = text.substring(index + keyword.length());
+
+            while (text.indexOf(keyword) != -1) {
+                index = index + text.indexOf(keyword) + keyword.length();
+                listIndex.add(index);
+
+                text = text.substring(text.indexOf(keyword) + keyword.length());
+            }
+            listIndexString = "Cac vi tri cua tu " + keyword + ": ";
+            for (int item : listIndex) {
+                listIndexString = listIndexString + item + " ";
+            }
+        } else {
+            listIndexString = "Khong co tu " + keyword + " trong thong diep da gui!";
+        }
+
+    }
+
+    private void perform(String keyInput, String input, String keyWord) {
 //prompts user for the keyword to use for encoding & creates tables  
         System.out.print("Enter the key for playfair cipher: ");
-        Scanner sc = new Scanner(System.in);
+
         String key = parseString(keyInput);
         table = this.cipherTable(key);
 //prompts user for message to be encoded  
-        System.out.print("Enter the plaintext to be encipher: ");
+
 //System.out.println("using the previously given keyword");  
         String message = parseString(input);
         while (input.equals("")) {
             input = parseString(input);
         }
 //encodes and then decodes the encoded message  
-           String decodedOutput = decode(input);
-            resultDecode=decodedOutput; 
-    
-        
+        String decodedOutput = decode(input);
+        resultDecode = decodedOutput;
+        find(decodedOutput, keyWord);
+
 //output the results to user  
-      this.keyTable(table);
-   //     this.printResults(output, decodedOutput);
+        this.keyTable(table);
+        //     this.printResults(output, decodedOutput);
 
     }
 //parses an input string to remove numbers, punctuation,  
 //replaces any J's with I's and makes string all caps  
 
     private String parseString(String text) {
-     
+
 //converts all the letters in upper case  
         text = text.toUpperCase();
 //the string to be substituted by space for each match (A to Z)  
@@ -224,25 +261,27 @@ public class Server {
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverSock = new ServerSocket(8888);
-       
         System.out.println("Server is running!");
+        Server server = new Server();
+        Socket client = serverSock.accept();
         while (true) {
-            Socket client = serverSock.accept();
+
             System.out.println("Server dang co client ket noi!");
             din = new DataInputStream(client.getInputStream());
             dout = new DataOutputStream(client.getOutputStream());
+
             String key = din.readUTF();
-            String message=din.readUTF();
-            System.out.println("key: "+key);
-            System.out.println("message: "+message);
-           Server server = new Server(key, message);
-           dout.writeUTF(resultDecode);     
-    }
+            String message = din.readUTF();
+            String keyWord = din.readUTF();
+            server.perform(key, message, keyWord);
+            dout.writeUTF(resultDecode);
+            dout.writeUTF(listIndexString);
+         
+
         }
+
+    }
 
 //        serverSock.close();
 //        client.close();
-    }
-
-
-
+}

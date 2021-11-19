@@ -17,34 +17,123 @@ import java.util.Scanner;
  * @author minht
  */
 public class Client {
-    public static void main(String[] args) {
-        DataInputStream din = null;
-        DataOutputStream dout = null;
+    private String key;
+    private String message;
+    private String messageEncode;
+    private String result;
+    private String keyTable;
+    private String vitri;
+    private String keyword;
+    DataInputStream din = null;
+    DataOutputStream dout = null;
+
+    public String getVitri() {
+        return vitri;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public void setVitri(String vitri) {
+        this.vitri = vitri;
+    }
+
+    public String getKeyTable() {
+        return keyTable;
+    }
+
+    public void setKeyTable(String keyTable) {
+        this.keyTable = keyTable;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    
+    public String getMessageEncode() {
+        return messageEncode;
+    }
+
+    public void setMessageEncode(String messageEncode) {
+        this.messageEncode = messageEncode;
+    }
+
+    public DataInputStream getDin() {
+        return din;
+    }
+
+    public void setDin(DataInputStream din) {
+        this.din = din;
+    }
+
+    public DataOutputStream getDout() {
+        return dout;
+    }
+
+    public void setDout(DataOutputStream dout) {
+        this.dout = dout;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    public void encode()
+    {
+          Encode encode =new Encode(key,message);
+          messageEncode=encode.getResultEncode();
+            keyTable=encode.getKeyTable();
+    }
+    public void gui() throws IOException
+    {
+        System.out.println("Key:"+ key);
+        System.out.println("MessageEncode: "+messageEncode);
+        System.out.println("Keyword: "+keyword);
+        dout.writeUTF(key);
+        dout.writeUTF(messageEncode);
+        dout.writeUTF(keyword);
+        
+       result = din.readUTF();
+        vitri=din.readUTF();
+        
+    }
+    public void init()
+    {
+        
         try {
             // TODO add your handling code here:
             Socket client = new Socket("127.0.0.1", 8888);
              din = new DataInputStream(client.getInputStream());
              dout = new DataOutputStream(client.getOutputStream());
+             
         } catch (IOException ex) {
            
         }
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Nhap key:");
-        String key=sc.nextLine();
-        System.out.println("Nhap message:");
-     
-        String message=sc.nextLine();
-          Encode encode =new Encode(key,message);
-          String messageEncode=encode.getResultEncode();
-        try {
-            dout.writeUTF(key);
-            dout.writeUTF(messageEncode);
-            String ketQua = din.readUTF();
-            System.out.println("Ket qua: "+ketQua);
-            
-        } catch (IOException ex) {
-           
-        }
+    }
+   public Client() {
+       
+        init();
         
     }
       
