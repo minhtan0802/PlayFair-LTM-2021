@@ -272,8 +272,8 @@ public class Server {
 
             String key = din.readUTF();
             String message = din.readUTF();
-            String keyWord = din.readUTF();
-            server.perform(key, message, keyWord);
+         
+            server.perform(key, message,"XINCHAO");
             dout.writeUTF(resultDecode);
             dout.writeUTF(listIndexString);
          

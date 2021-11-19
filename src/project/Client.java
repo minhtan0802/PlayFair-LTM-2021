@@ -112,8 +112,7 @@ public class Client {
         System.out.println("Keyword: "+keyword);
         dout.writeUTF(key);
         dout.writeUTF(messageEncode);
-        dout.writeUTF(keyword);
-        
+               
        result = din.readUTF();
         vitri=din.readUTF();
         
