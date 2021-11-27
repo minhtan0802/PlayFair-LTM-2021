@@ -301,7 +301,6 @@ public class ClientFm extends javax.swing.JFrame {
               
                 // TODO add your handling code here:
 
-            
                 client.gui();
                 txt_Decode.setText(client.getResult());
                 txtArea_Result.setText(client.getVitri());

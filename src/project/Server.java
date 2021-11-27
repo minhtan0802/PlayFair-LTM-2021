@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
@@ -242,7 +245,7 @@ public class Server {
         return pt;
     }
 //function prints the key-table in matrix form for playfair cipher  
-
+        
     private void keyTable(String[][] printTable) {
         System.out.println("Playfair Cipher Key Matrix: ");
         System.out.println();
@@ -258,26 +261,65 @@ public class Server {
         System.out.println();
     }
 //method that prints all the results  
+    public static ArrayList<Socket> listSK;
 
     public static void main(String[] args) throws IOException {
-        ServerSocket serverSock = new ServerSocket(8888);
-        System.out.println("Server is running!");
-        Server server = new Server();
-        Socket client = serverSock.accept();
-        while (true) {
+        Server.listSK = new ArrayList<>();
+        class ReadServer extends Thread {
 
-            System.out.println("Server dang co client ket noi!");
-            din = new DataInputStream(client.getInputStream());
-            dout = new DataOutputStream(client.getOutputStream());
+            private Socket socket;
+
+            public ReadServer(Socket socket) {
+                this.socket = socket;
+            }
+
+            @Override
+            public void run() {
+                try {
+                 
+                         din = new DataInputStream(socket.getInputStream());
+                         dout = new DataOutputStream(socket.getOutputStream());
+                         System.out.println("Processing: " + socket+ din+ dout);
+                     while(true){
+                         String key = din.readUTF();
+                         String message = din.readUTF();
+                         Server server = new Server();
+                         server.perform(key, message,"XINCHAO");
+                         
+                         dout.writeUTF(resultDecode);
+                         dout.writeUTF(listIndexString);
+                       }
+                       
+                  
+                } catch (Exception e) {
+                    try {
+                        socket.close();
+                    } catch (IOException ex) {
+                        System.out.println("Ngắt kết nối Server");
+                    }
+                }
+            }
+        }
+        ServerSocket serverSock = new ServerSocket(8888);
+        ExecutorService executor = Executors.newFixedThreadPool(5);//Cho 5 client kết nối nếu thêm thì sửa số khác
+        System.out.println("Server is running!");
+        while (true) {
+            Socket client = serverSock.accept();
+            Server.listSK.add(client);
+            System.out.println("Server dang co " +Server.listSK.size()+" client ket noi!");
+             /*din = new DataInputStream(client.getInputStream());
+             dout = new DataOutputStream(client.getOutputStream());
 
             String key = din.readUTF();
             String message = din.readUTF();
          
             server.perform(key, message,"XINCHAO");
             dout.writeUTF(resultDecode);
-            dout.writeUTF(listIndexString);
-         
+            dout.writeUTF(listIndexString);*/
+              ReadServer read = new ReadServer(client);
+              executor.execute(read);
 
+            
         }
 
     }
