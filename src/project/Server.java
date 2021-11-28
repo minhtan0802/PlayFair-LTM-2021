@@ -278,16 +278,18 @@ public class Server {
                 try {
                  
                          din = new DataInputStream(socket.getInputStream());
-                         dout = new DataOutputStream(socket.getOutputStream());
+                         
                          System.out.println("Processing: " + socket+ din+ dout);
                      while(true){
                          String key = din.readUTF();
                          String message = din.readUTF();
                          Server server = new Server();
                          server.perform(key, message,"XINCHAO");
-                         
+                         for(Socket item : Server.listSK)
+                         {dout = new DataOutputStream(item.getOutputStream());
                          dout.writeUTF(resultDecode);
                          dout.writeUTF(listIndexString);
+                         }
                        }
                        
                   
