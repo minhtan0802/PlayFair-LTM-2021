@@ -6,7 +6,9 @@
 package project;
 
 import java.awt.Dialog;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -16,7 +18,6 @@ import javax.swing.JOptionPane;
  * @author chautrieu
  */
 public class ClientFm extends javax.swing.JFrame {
-
     /**
      * Creates new form ClientFm
      */
@@ -25,7 +26,36 @@ public class ClientFm extends javax.swing.JFrame {
     public ClientFm() {
         initComponents();
     }
+     class ReadClient extends Thread {
 
+            private Socket client;
+
+            public ReadClient(Socket client) {
+                this.client = client;
+            }
+
+            @Override
+            public void run() {
+                DataInputStream dis = null;
+                try {
+                    dis = new DataInputStream(client.getInputStream());
+                    while (true) {
+                        System.out.println("Nhan ve");
+                        txt_Decode.setText(dis.readUTF());
+                        txtArea_Result.setText(dis.readUTF());
+                    }
+                } catch (Exception e) {
+                    try {
+                        dis.close();
+                        client.close();
+                    } catch (IOException ex) {
+                        System.out.println("Ngắt kết nối Server");
+                    }
+                }
+            }
+     }
+
+      
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -247,6 +277,8 @@ public class ClientFm extends javax.swing.JFrame {
         // TODO add your handling code here:
         btn_Gui.setEnabled(false);
         client = new Client();
+        ReadClient read = new ReadClient(client.client);
+        read.start();
     }//GEN-LAST:event_formWindowOpened
 
     private void txt_KeyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_KeyKeyTyped
@@ -300,10 +332,8 @@ public class ClientFm extends javax.swing.JFrame {
             try {
               
                 // TODO add your handling code here:
-
-                client.gui();
-                txt_Decode.setText(client.getResult());
-                txtArea_Result.setText(client.getVitri());
+                
+                client.gui(); 
             } catch (IOException ex) {
                 Logger.getLogger(ClientFm.class.getName()).log(Level.SEVERE, null, ex);
             }

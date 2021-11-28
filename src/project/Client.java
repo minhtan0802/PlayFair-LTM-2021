@@ -11,8 +11,6 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.net.Socket;
 import java.util.Scanner;
-import static project.Server.din;
-import static project.Server.dout;
 
 /**
  *
@@ -28,8 +26,9 @@ public class Client {
     private String keyword;
     DataInputStream din = null;
     DataOutputStream dout = null;
-    private  Socket client;
-
+    public Socket client;
+    
+    
     public String getVitri() {
         return vitri;
     }
@@ -106,7 +105,7 @@ public class Client {
     {
           Encode encode =new Encode(key,message);
           messageEncode=encode.getResultEncode();
-            keyTable=encode.getKeyTable();
+          keyTable=encode.getKeyTable();
     }
     public void gui() throws IOException
     {
@@ -116,20 +115,21 @@ public class Client {
         System.out.println("Keyword: "+keyword);
         dout.writeUTF(key);
         dout.writeUTF(messageEncode);
-        System.out.println("Gửi thành công");       
-        result = din.readUTF();
-        vitri=din.readUTF();
+        System.out.println("Gửi thành công");    
+      
+        
         
     }
+     
     public void init()
     {
         
         try {
             // TODO add your handling code here:
              client = new Socket("127.0.0.1", 8888);
-             din = new DataInputStream(client.getInputStream());
-            dout = new DataOutputStream(client.getOutputStream());
-            System.out.println("Processing: " +client+ din+ dout);
+             //din = new DataInputStream(client.getInputStream());
+             dout = new DataOutputStream(client.getOutputStream());
+             System.out.println("Processing: " +client+ din);
          
              
         } catch (IOException ex) {

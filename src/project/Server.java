@@ -24,8 +24,6 @@ public class Server {
     //length of digraph array  
 
     //length of digraph array  
-    static DataOutputStream dout = null;
-    static DataInputStream din = null;
     private int length = 0;
 //creates a matrix for Playfair cipher   
     private String[][] table;
@@ -275,26 +273,32 @@ public class Server {
 
             @Override
             public void run() {
+                
+                  DataOutputStream dout = null;
+                 DataInputStream din = null;
                 try {
                  
                          din = new DataInputStream(socket.getInputStream());
-                         
-                         System.out.println("Processing: " + socket+ din+ dout);
+                           dout = new DataOutputStream(socket.getOutputStream());
+                         Server server = new Server();
                      while(true){
+                         System.out.println("Nhan: " + socket+ din+ dout);
                          String key = din.readUTF();
                          String message = din.readUTF();
-                         Server server = new Server();
+                        
                          server.perform(key, message,"XINCHAO");
-                         for(Socket item : Server.listSK)
-                         {dout = new DataOutputStream(item.getOutputStream());
-                         dout.writeUTF(resultDecode);
-                         dout.writeUTF(listIndexString);
-                         }
+                      
+                              System.out.println("Gui ve: " + socket+ din+ dout);    
+                            
+                              dout.writeUTF(resultDecode);
+                              dout.writeUTF(listIndexString);
+                        
                        }
                        
                   
                 } catch (Exception e) {
                     try {
+                        listSK.remove(socket);
                         socket.close();
                     } catch (IOException ex) {
                         System.out.println("Ngắt kết nối Server");
