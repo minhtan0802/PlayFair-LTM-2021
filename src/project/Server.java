@@ -84,6 +84,10 @@ public class Server {
         }
 //encodes and then decodes the encoded message  
         String decodedOutput = decode(input);
+        while(decodedOutput.charAt(decodedOutput.length()-1)=='X')
+        {
+            decodedOutput=decodedOutput.substring(0,decodedOutput.length()-1);
+        }
         resultDecode = decodedOutput;
         find(decodedOutput, keyWord);
 

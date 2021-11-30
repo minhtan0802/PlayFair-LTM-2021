@@ -290,7 +290,7 @@ public class ClientFm extends javax.swing.JFrame {
         // TODO add your handling code here:
         char c = evt.getKeyChar();
 
-        if (Character.isLetter(c) || Character.isWhitespace(c) || Character.isISOControl(c)) {
+        if (Character.isLetter(c) || Character.isISOControl(c)) {
 
             txt_Key.setEditable(true);
         } else {
